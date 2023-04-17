@@ -128,7 +128,7 @@ public sealed partial class StoreMenu : DefaultWindow
                 texture = spriteSys.Frame0(action.Icon);
         }
 
-        var newListing = new StoreListingControl(listingName, listingDesc, GetListingPriceString(listing), canBuy, texture);
+        var newListing = new StoreListingControl(listingName, listingDesc, GetListingPriceString(listing), GetListingOldPriceString(listing), canBuy, texture);
         newListing.StoreItemBuyButton.OnButtonDown += args
             => OnListingButtonPressed?.Invoke(args, listing);
 
@@ -157,6 +157,25 @@ public sealed partial class StoreMenu : DefaultWindow
         else
         {
             foreach (var (type, amount) in listing.Cost)
+            {
+                var currency = _prototypeManager.Index<CurrencyPrototype>(type);
+                text += Loc.GetString("store-ui-price-display", ("amount", amount),
+                    ("currency", Loc.GetString(currency.DisplayName, ("amount", amount))));
+            }
+        }
+
+        return text.TrimEnd();
+    }
+
+    public string GetListingOldPriceString(ListingData listing)
+    {
+        var text = string.Empty;
+
+        if (listing.OldCost.Count < 1)
+            text = Loc.GetString("store-currency-free");
+        else
+        {
+            foreach (var (type, amount) in listing.OldCost)
             {
                 var currency = _prototypeManager.Index<CurrencyPrototype>(type);
                 text += Loc.GetString("store-ui-price-display", ("amount", amount),

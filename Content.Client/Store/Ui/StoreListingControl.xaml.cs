@@ -9,12 +9,15 @@ namespace Content.Client.Store.Ui;
 public sealed partial class StoreListingControl : Control
 {
     public StoreListingControl(string itemName, string itemDescription,
-        string price, bool canBuy, Texture? texture = null)
+        string price, string oldPrice, bool canBuy, Texture? texture = null)
     {
         RobustXamlLoader.Load(this);
 
         StoreItemName.Text = itemName;
         StoreItemDescription.SetMessage(itemDescription);
+
+        StoreItemPriceWithoutDiscount.Text = oldPrice;
+        StoreItemPriceWithoutDiscount.Visible = price != oldPrice;
 
         StoreItemBuyButton.Text = price;
         StoreItemBuyButton.Disabled = !canBuy;

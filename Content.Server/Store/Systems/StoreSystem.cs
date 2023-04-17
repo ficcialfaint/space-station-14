@@ -8,6 +8,8 @@ using System.Linq;
 using Content.Server.UserInterface;
 using Content.Shared.Stacks;
 using JetBrains.Annotations;
+using Microsoft.VisualBasic.CompilerServices;
+using Robust.Shared.Random;
 
 namespace Content.Server.Store.Systems;
 
@@ -19,6 +21,7 @@ public sealed partial class StoreSystem : EntitySystem
 {
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly IRobustRandom _random = default!;
 
     public override void Initialize()
     {
@@ -39,6 +42,28 @@ public sealed partial class StoreSystem : EntitySystem
     {
         RefreshAllListings(component);
         InitializeFromPreset(component.Preset, uid, component);
+        var listings = component.Listings.ToList();
+        foreach (int _ in Enumerable.Range(1, 5))
+        {
+            var item = _random.PickAndTake(listings);
+
+            var discountPrice = new Dictionary<string, FixedPoint2>();
+            // var discount = _random.NextFloat(item.MinDiscount, item.MaxDiscount);
+            var discount = _random.NextFloat(0, 1);
+
+            item.OldCost = item.Cost;
+            foreach (var (currency, amount) in item.Cost)
+            {
+                discountPrice[currency] = MathF.Round((float) (amount * discount));
+                if (discountPrice[currency] == 0)
+                {
+                    discountPrice[currency] = 1;
+                }
+                item.Cost = discountPrice;
+
+            }
+        }
+
     }
 
     private void OnStartup(EntityUid uid, StoreComponent component, ComponentStartup args)

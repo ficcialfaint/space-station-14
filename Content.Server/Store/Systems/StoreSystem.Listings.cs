@@ -89,6 +89,9 @@ public sealed partial class StoreSystem
             if (!ListingHasCategory(listing, categories))
                 continue;
 
+            if (listing.MaxDiscount > 1)
+                continue;
+
             if (listing.Conditions != null)
             {
                 var args = new ListingConditionArgs(buyer, storeEntity, listing, EntityManager);

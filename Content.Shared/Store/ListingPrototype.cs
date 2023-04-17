@@ -44,6 +44,23 @@ public class ListingData : IEquatable<ListingData>, ICloneable
     public Dictionary<string, FixedPoint2> Cost = new();
 
     /// <summary>
+    ///     Discount minimum percentage.
+    /// </summary>
+    [DataField("minDiscount")]
+    public float MinDiscount = 0;
+
+    /// <summary>
+    ///     Discount maximum percentage.
+    /// </summary>
+    [DataField("maxDiscount")]
+    public float MaxDiscount = 0;
+
+    /// <summary>
+    /// The discounted cost of the listing. String represents the currency type while the FixedPoint2 represents the amount of that currency.
+    /// </summary>
+    public Dictionary<string, FixedPoint2> OldCost = new();
+
+    /// <summary>
     /// Specific customizeable conditions that determine whether or not the listing can be purchased.
     /// </summary>
     [NonSerialized]
@@ -130,6 +147,9 @@ public class ListingData : IEquatable<ListingData>, ICloneable
             Description = Description,
             Categories = Categories,
             Cost = Cost,
+            MinDiscount = MinDiscount,
+            MaxDiscount = MaxDiscount,
+            OldCost = OldCost,
             Conditions = Conditions,
             Icon = Icon,
             Priority = Priority,
