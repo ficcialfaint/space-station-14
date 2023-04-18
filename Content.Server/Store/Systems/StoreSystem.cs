@@ -43,6 +43,12 @@ public sealed partial class StoreSystem : EntitySystem
         RefreshAllListings(component);
         InitializeFromPreset(component.Preset, uid, component);
         var listings = component.Listings.ToList();
+
+        foreach (var listing in listings)
+        {
+            listing.OldCost = listing.Cost;
+        }
+
         foreach (int _ in Enumerable.Range(1, 5))
         {
             var item = _random.PickAndTake(listings);
@@ -51,17 +57,17 @@ public sealed partial class StoreSystem : EntitySystem
             // var discount = _random.NextFloat(item.MinDiscount, item.MaxDiscount);
             var discount = _random.NextFloat(0, 1);
 
-            item.OldCost = item.Cost;
             foreach (var (currency, amount) in item.Cost)
             {
+                if (discount == 0)
+                    continue;
                 discountPrice[currency] = MathF.Round((float) (amount * discount));
                 if (discountPrice[currency] == 0)
                 {
                     discountPrice[currency] = 1;
                 }
-                item.Cost = discountPrice;
-
             }
+            item.Cost = discountPrice;
         }
 
     }
